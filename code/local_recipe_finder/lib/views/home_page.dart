@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
       context,
       listen: false,
     );
-    Timer.periodic(const Duration(seconds: 60), (timer) {
+    Timer.periodic(const Duration(seconds: 5), (timer) {
       provider.fetchRecipesByLocation("Canadian"); // sample area
     });
   }

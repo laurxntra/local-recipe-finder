@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:local_recipe_finder/util/recipe_mocker.dart';
 import '../models/recipe.dart';
 import 'dart:async';
 
@@ -31,48 +32,51 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    // Construct url to filter recipes by location
-    final url = Uri.parse(
-      'https://www.themealdb.com/api/json/v1/1/filter.php?a=$area',
-    );
+    //this is for mock data
+    _recipes = RecipeMocker.getMockRecipe();
 
-    try {
-      // HTTP get request
-      final response = await http.get(url);
+    // // Construct url to filter recipes by location
+    // final url = Uri.parse(
+    //   'https://www.themealdb.com/api/json/v1/1/filter.php?a=$area',
+    // );
 
-      // Checking for a successful response
-      if (response.statusCode == 200) {
-        // Decodes JSON response body
-        final data = jsonDecode(response.body);
-        // Extracts the 'meals' array
-        final meals = data['meals'] as List<dynamic>?;
+    // try {
+    //   // HTTP get request
+    //   final response = await http.get(url);
 
-        // If no meals are found, clear the recipe list
-        if (meals == null) {
-          _recipes = [];
-          // Otherwise, prepare a list to hold recipe objects
-        } else {
-          List<Recipe> detailedRecipes = [];
+    //   // Checking for a successful response
+    //   if (response.statusCode == 200) {
+    //     // Decodes JSON response body
+    //     final data = jsonDecode(response.body);
+    //     // Extracts the 'meals' array
+    //     final meals = data['meals'] as List<dynamic>?;
 
-          // For each meal, fetch the information based off their ID
-          for (var meal in meals) {
-            final id = meal['idMeal'] as String;
-            final detailedRecipe = await fetchRecipeDetails(id, area);
-            if (detailedRecipe != null) {
-              detailedRecipes.add(detailedRecipe);
-            }
-          }
-          // Update the recipe list with the detailed recipes
-          _recipes = detailedRecipes;
-        }
-        // An error has occurred, clear the recipes list
-      } else {
-        _recipes = [];
-      }
-      // An error has occurred, clear the recipes list
-    } catch (e) {
-      _recipes = [];
-    }
+    //     // If no meals are found, clear the recipe list
+    //     if (meals == null) {
+    //       _recipes = [];
+    //       // Otherwise, prepare a list to hold recipe objects
+    //     } else {
+    //       List<Recipe> detailedRecipes = [];
+
+    //       // For each meal, fetch the information based off their ID
+    //       for (var meal in meals) {
+    //         final id = meal['idMeal'] as String;
+    //         final detailedRecipe = await fetchRecipeDetails(id, area);
+    //         if (detailedRecipe != null) {
+    //           detailedRecipes.add(detailedRecipe);
+    //         }
+    //       }
+    //       // Update the recipe list with the detailed recipes
+    //       _recipes = detailedRecipes;
+    //     }
+    //     // An error has occurred, clear the recipes list
+    //   } else {
+    //     _recipes = [];
+    //   }
+    //   // An error has occurred, clear the recipes list
+    // } catch (e) {
+    //   _recipes = [];
+    // }
 
     // Loading complete, now notify listeners
     _isLoading = false;
