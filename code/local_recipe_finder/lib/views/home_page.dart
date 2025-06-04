@@ -196,17 +196,17 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
-      // * Bottom navigation bar - currently not functional
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home Page"),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border),
-            label: "Saved",
-          ),
-        ],
-      ),
+      // // * Bottom navigation bar - currently not functional
+      // bottomNavigationBar: BottomNavigationBar(
+      //   currentIndex: 0,
+      //   items: const [
+      //     BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home Page"),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.favorite_border),
+      //       label: "Saved",
+      //     ),
+      //   ],
+      // ),
     );
   }
 }
