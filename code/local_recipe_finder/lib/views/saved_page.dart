@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:local_recipe_finder/views/recipe_details_page.dart';
 import 'package:provider/provider.dart';
 import '../models/recipe.dart';
 import '../providers/local_recipe_finder_provider.dart';
@@ -38,7 +39,16 @@ class SavedPage extends StatelessWidget {
               itemCount: savedRecipes.length,
               itemBuilder: (context, index) {
                 final recipe = savedRecipes[index];
-                return Card(
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => RecipeDetailsPage(recipe: recipe),
+                      ),
+                    );
+                  },
+                child: Card(
                   margin: const EdgeInsets.all(12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -88,9 +98,10 @@ class SavedPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                );
-              },
-            ),
+                )
+              );
+            },
+          ),
     );
   }
 }
