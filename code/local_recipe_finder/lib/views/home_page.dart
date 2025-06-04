@@ -215,13 +215,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home Page"),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: "Saved"),
-        ],
-      ),
     );
   }
 }
