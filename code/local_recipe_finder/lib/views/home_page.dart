@@ -30,6 +30,18 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _panStart(DragStartDetails details, LocalRecipeFinderProvider provider) {
+    setState(() {
+      _dragX = 0;
+    });
+  }
+
+  void _panUpdate(DragUpdateDetails details, LocalRecipeFinderProvider provider) {
+    setState(() {
+      _dragX += details.delta.dx;
+    });
+  }
+
   /// Called when the user horizontally swipe gestures
   /// 
   /// Parameters:
@@ -37,7 +49,7 @@ class _HomePageState extends State<HomePage> {
   /// 
   /// Returns:
   /// - Updates the UI state
-  void _onPanEnd(LocalRecipeFinderProvider provider) {
+  void _onPanEnd(DragEndDetails details, LocalRecipeFinderProvider provider) {
     // Certain amount of pixels when swiping
     const swipe = 100;
 
@@ -119,16 +131,9 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: Center(
               child: GestureDetector(
-                onPanUpdate: (details) {
-                  // Updates the drag amount as the user swipes
-                  setState(() {
-                    _dragX += details.delta.dx;
-                  });
-                },
-                // Handles the end of the swipe gesture
-                onPanEnd: (_) {
-                  _onPanEnd(provider);
-                },
+                onPanStart: (details) => _panStart(details, provider),
+                onPanUpdate: (details) => _panUpdate(details, provider),
+                onPanEnd: (details) => _onPanEnd(details, provider),
                 child: Transform.translate(
                   // Moves the card based off the drag position
                   offset: Offset(_dragX, 0),
