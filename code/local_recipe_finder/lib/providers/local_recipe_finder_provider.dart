@@ -33,7 +33,7 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
     notifyListeners();
 
     //this is for mock data
-    _recipes = RecipeMocker.getMockRecipe();
+    _recipes = RecipeMocker.getMockRecipe;
 
     // // Construct url to filter recipes by location
     // final url = Uri.parse(
