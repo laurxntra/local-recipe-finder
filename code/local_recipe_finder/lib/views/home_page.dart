@@ -130,54 +130,79 @@ class _HomePageState extends State<HomePage> {
         children: [
           Expanded(
             child: Center(
-              child: GestureDetector(
-                onPanStart: (details) => _panStart(details, provider),
-                onPanUpdate: (details) => _panUpdate(details, provider),
-                onPanEnd: (details) => _onPanEnd(details, provider),
-                child: Transform.translate(
-                  // Moves the card based off the drag position
-                  offset: Offset(_dragX, 0),
-                  child: Card(
-                    margin: const EdgeInsets.all(16),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+              child: Semantics (
+                label: 'Recipe card, Swipe right to like, swipe left to skip',
+                child: GestureDetector(
+                  onPanStart: (details) => _panStart(details, provider),
+                  onPanUpdate: (details) => _panUpdate(details, provider),
+                  onPanEnd: (details) => _onPanEnd(details, provider),
+                  child: Transform.translate(
+                    // Moves the card based off the drag position
+                    offset: Offset(_dragX, 0),
+                    child: Card(
+                      margin: const EdgeInsets.all(16),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                             // Recipe title
-                            Text(
-                              recipe.name,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
+                            Semantics (
+                              header: true,
+                              child: Text(
+                                recipe.name,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 8),
+
                             // Recipe image
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.network(
-                                recipe.imageUrl,
-                                height: 200,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
+                            Semantics (
+                              label: 'Recipe image for ${recipe.name}',
+                              child: ClipRRect(
+                               borderRadius: BorderRadius.circular(12),
+                                child: Image.network(
+                                  recipe.imageUrl,
+                                  height: 200,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 12),
                             // Recipe ingredients
-                            const Text(
-                              "Ingredients:",
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                            Semantics(
+                              container: true,
+                              child: Text(
+                               "Ingredients:",
+                               style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                             ),
-                            ...recipe.ingredients.map((item) => Text("• $item")),
+                            ...recipe.ingredients.map((item) => Semantics (
+                                label: 'Ingredient: $item',
+                                excludeSemantics: true,
+                                child: Text("- $item"),
+                              ),
+                            ),
                             const SizedBox(height: 12),
                             // Recipe instructions
-                            const Text(
-                              "Instructions:",
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                            Semantics (
+                              container: true,
+                              child: Text(
+                                "Instructions:",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                             ),
-                            ...recipe.instructions.map((step) => Text("• $step")),
+                            ...recipe.instructions.map((step) => Semantics (
+                              label: 'Instructions: $step',
+                              excludeSemantics: true,
+                              child: Text("- $step")
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -187,30 +212,33 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
+        ),
           // Swiping instructions
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Column(
-              children: const [
-                Text(
-                  "Swipe right if you like it, swipe left if you don't!",
-                  style: TextStyle(fontStyle: FontStyle.italic),
-                ),
-                SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      "NO",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "YES",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ],
+            child: Semantics (
+              child: Column(
+                children: const [
+                  Text(
+                    "Swipe right if you like it, swipe left if you don't!",
+                    style: TextStyle(fontStyle: FontStyle.italic),
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        "NO",
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "YES",
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],
