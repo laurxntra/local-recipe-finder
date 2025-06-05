@@ -225,12 +225,12 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: Semantics(
               child: Column(
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     "Swipe right if you like it, swipe left if you don't!",
                     style: TextStyle(fontStyle: FontStyle.italic),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -239,6 +239,7 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
+                          color: _dragX < -10 ? Colors.red : Colors.black,
                         ),
                       ),
                       Text(
@@ -246,6 +247,7 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
+                          color: _dragX > 10 ? Colors.green : Colors.black
                         ),
                       ),
                     ],
