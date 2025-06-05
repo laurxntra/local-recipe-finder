@@ -41,6 +41,18 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
     //this is for mock data
     //_recipes = RecipeMocker.getMockRecipe;
 
+    // this is to see if there is already a recipe
+    final existingRecipe =
+        await isar.recipes.filter().locationEqualTo(area).findAll();
+
+    if (existingRecipe.isNotEmpty) {
+      // If recipes already exist for this area, load them from Isar
+      _recipes = existingRecipe;
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
+
     // Construct url to filter recipes by location
     final url = Uri.parse(
       'https://www.themealdb.com/api/json/v1/1/filter.php?a=$area',
@@ -74,6 +86,11 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
           }
           // Update the recipe list with the detailed recipes
           _recipes = detailedRecipes;
+
+          // Save the recipes to the Isar database
+          await isar.writeTxn(() async {
+            await isar.recipes.putAll(_recipes);
+          });
         }
         // An error has occurred, clear the recipes list
       } else {
