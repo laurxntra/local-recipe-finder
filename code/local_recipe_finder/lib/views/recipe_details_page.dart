@@ -26,6 +26,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
     _controller = TextEditingController(text: noteProvider.note);
 
     _controller.addListener(() {
+      final noteProvider = Provider.of<NotesProvider>(context, listen: false);
       if (_controller.text != noteProvider.note) {
         noteProvider.setNote(_controller.text);
       }
@@ -40,7 +41,6 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
 
   Future<void> _popBack() async {
     final noteProvider = Provider.of<NotesProvider>(context, listen: false);
-
     final updatedRecipe = widget.recipe.clone(notes: noteProvider.note);
 
     final provider = Provider.of<LocalRecipeFinderProvider>(
@@ -52,6 +52,9 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
       await provider.isar.recipes.put(updatedRecipe);
     });
 
+    await provider.isar.writeTxn(() async {
+      await provider.isar.recipes.put(updatedRecipe);
+    });
     Navigator.pop(context, updatedRecipe);
   }
 
@@ -111,16 +114,30 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                 ),
               ],
             ),
-            TextFormField(
-              controller: _controller,
-              maxLines: 5,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                hintText: "Write any notes about this recipe here",
-              ),
+            const SizedBox(height: 8),
+
+            Consumer<NotesProvider>(
+              builder: (context, provider, _) {
+                if (_controller.text != provider.note) {
+                  _controller.text = provider.note;
+                  _controller.selection = TextSelection.fromPosition(
+                    TextPosition(offset: _controller.text.length),
+                  );
+                }
+
+                return TextFormField(
+                  controller: _controller,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    hintText: "Write any notes about this recipe here",
+                  ),
+                );
+              },
             ),
+
             const SizedBox(height: 16),
             Align(
               alignment: Alignment.centerRight,

@@ -15,7 +15,6 @@ class NotesProvider extends ChangeNotifier {
 
   void setNote(String newNote) {
     if (newNote == _currentNotes) return;
-
     _pastNotes.add(_currentNotes);
     _currentNotes = newNote;
     _futureNotes.clear();
