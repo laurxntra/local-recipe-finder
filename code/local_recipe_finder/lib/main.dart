@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:local_recipe_finder/models/recipe.dart';
+import 'package:local_recipe_finder/providers/notes_provider.dart';
 import 'package:local_recipe_finder/views/home_page.dart';
 import 'package:local_recipe_finder/views/saved_page.dart';
 import 'package:provider/provider.dart';
 import '../providers/local_recipe_finder_provider.dart';
 import 'providers/position_provider.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:isar/isar.dart';
 
-void main() {
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final dir = await getApplicationDocumentsDirectory();
+
+  final isar = await Isar.open([RecipeSchema], directory: dir.path);
+
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => LocalRecipeFinderProvider()),
+        ChangeNotifierProvider(create: (_) => LocalRecipeFinderProvider(isar)),
         ChangeNotifierProvider(create: (_) => PositionProvider()),
+        ChangeNotifierProvider(create: (_) => NotesProvider()),
       ],
       child: const MainApp(),
     ),

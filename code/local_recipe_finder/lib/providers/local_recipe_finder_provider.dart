@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:isar/isar.dart';
 import 'package:local_recipe_finder/util/recipe_mocker.dart';
 import '../models/recipe.dart';
 import 'dart:async';
@@ -8,6 +9,11 @@ import 'dart:async';
 /// Provider class that manages fetching/storing recipes from TheMealDB API
 /// Filters recipes by a given location/area and exposes loading data and data
 class LocalRecipeFinderProvider extends ChangeNotifier {
+  final Isar isar;
+  LocalRecipeFinderProvider(this.isar) {
+    _recipes = isar.recipes.where().findAllSync();
+  }
+
   // Private list to store fetched recipes
   List<Recipe> _recipes = [];
 
@@ -23,6 +29,13 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
   // Getter for loading state
   bool get isLoading => _isLoading;
 
+  void updatedRecipe (Recipe updatedRecipe) {
+    final index = likedRecipes.indexWhere((r) => r.id == updatedRecipe.id);
+    if (index != -1) {
+      likedRecipes[index] = updatedRecipe;
+      notifyListeners();
+    }
+  }
   /// Fetches recipes filtered by location from TheMealDB API
   ///
   /// Parameters:
@@ -34,6 +47,18 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
 
     //this is for mock data
     //_recipes = RecipeMocker.getMockRecipe;
+
+    // this is to see if there is already a recipe
+    final existingRecipe =
+        await isar.recipes.filter().locationEqualTo(area).findAll();
+
+    if (existingRecipe.isNotEmpty) {
+      // If recipes already exist for this area, load them from Isar
+      _recipes = existingRecipe;
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
 
     // Construct url to filter recipes by location
     final url = Uri.parse(
@@ -68,6 +93,11 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
           }
           // Update the recipe list with the detailed recipes
           _recipes = detailedRecipes;
+
+          // Save the recipes to the Isar database
+          await isar.writeTxn(() async {
+            await isar.recipes.putAll(_recipes);
+          });
         }
         // An error has occurred, clear the recipes list
       } else {
@@ -140,7 +170,7 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
                 .where((s) => s.isNotEmpty)
                 .toList();
 
-        print('it worked!');
+        //print('it worked!');
         // Creates and return a Recipe object populated with all the data
         return Recipe(
           name: meal['strMeal'] ?? 'Unknown',
@@ -164,10 +194,19 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
   ///
   /// Parameters:
   /// - recipe: The recipe object to be saved
-  void saveRecipe(Recipe recipe) {
+  Future<void> saveRecipe(Recipe recipe) async {
     if (!likedRecipes.contains(recipe)) {
       likedRecipes.add(recipe);
-      notifyListeners();
     }
+
+    await isar.writeTxn(() async {
+      final id = await isar.recipes.put(recipe);
+      if (recipe.id == null || recipe.id == 0) {
+        recipe.id = id;
+      }
+    });
+    notifyListeners();
   }
+
+
 }

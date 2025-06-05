@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:local_recipe_finder/providers/local_recipe_finder_provider.dart';
+import 'package:local_recipe_finder/providers/notes_provider.dart';
+import 'package:provider/provider.dart';
 import '../models/recipe.dart';
 
-/// A page to view full details of a single recipe,
-/// including an editable notes section similar to a journal entry.
-///
-/// Parameters:
-/// - recipe: The Recipe object to display and edit notes for
 class RecipeDetailsPage extends StatefulWidget {
   final Recipe recipe;
 
@@ -16,23 +14,53 @@ class RecipeDetailsPage extends StatefulWidget {
 }
 
 class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
-  // Local editable state for the notes field
-  late String currentNotes;
+  late TextEditingController _controller;
 
   @override
   void initState() {
     super.initState();
-    // Initialize notes from recipe or empty string
-    currentNotes = widget.recipe.notes ?? '';
+
+    final noteProvider = Provider.of<NotesProvider>(context, listen: false);
+    noteProvider.reset(widget.recipe.notes ?? '');
+
+    _controller = TextEditingController(text: noteProvider.note);
+
+    _controller.addListener(() {
+      if (_controller.text != noteProvider.note) {
+        noteProvider.setNote(_controller.text);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _popBack() async {
+    final noteProvider = Provider.of<NotesProvider>(context, listen: false);
+
+    final updatedRecipe = widget.recipe.clone(notes: noteProvider.note);
+
+    final provider = Provider.of<LocalRecipeFinderProvider>(
+      context,
+      listen: false,
+    );
+
+    await provider.isar.writeTxn(() async {
+      await provider.isar.recipes.put(updatedRecipe);
+    });
+
+    Navigator.pop(context, updatedRecipe);
   }
 
   @override
   Widget build(BuildContext context) {
+    final noteProvider = Provider.of<NotesProvider>(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.recipe.name),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(widget.recipe.name), centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -48,7 +76,6 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
               ),
             ),
             const SizedBox(height: 16),
-
             const Text(
               "Ingredients",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -56,7 +83,6 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
             const SizedBox(height: 8),
             ...widget.recipe.ingredients.map((item) => Text("- $item")),
             const SizedBox(height: 16),
-
             const Text(
               "Instructions:",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -66,33 +92,40 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                   (entry) => Text("${entry.key + 1}. ${entry.value}"),
                 ),
             const SizedBox(height: 24),
-
             const Text(
               "Notes:",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-
-            // Editable text field for notes, updates local state
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.undo),
+                  onPressed: noteProvider.canUndo ? noteProvider.undo : null,
+                  tooltip: "Undo",
+                ),
+                IconButton(
+                  icon: const Icon(Icons.redo),
+                  onPressed: noteProvider.canRedo ? noteProvider.redo : null,
+                  tooltip: "Redo",
+                ),
+              ],
+            ),
             TextFormField(
-              initialValue: currentNotes,
+              controller: _controller,
               maxLines: 5,
               decoration: InputDecoration(
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 hintText: "Write any notes about this recipe here",
               ),
-              onChanged: (value) {
-                setState(() {
-                  currentNotes = value;
-                });
-              },
             ),
             const SizedBox(height: 16),
-
             Align(
               alignment: Alignment.centerRight,
               child: ElevatedButton(
-                onPressed: () => _popBack(),
+                onPressed: _popBack,
                 child: const Text("Save Notes"),
               ),
             ),
@@ -100,20 +133,5 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
         ),
       ),
     );
-  }
-
-  /// Creates an updated Recipe object with the new notes and
-  /// returns it to the previous screen via Navigator.pop
-  void _popBack() {
-    final updatedRecipe = Recipe(
-      id: widget.recipe.id,
-      name: widget.recipe.name,
-      location: widget.recipe.location,
-      imageUrl: widget.recipe.imageUrl,
-      ingredients: widget.recipe.ingredients,
-      instructions: widget.recipe.instructions,
-      notes: currentNotes,
-    );
-    Navigator.pop(context, updatedRecipe);
   }
 }

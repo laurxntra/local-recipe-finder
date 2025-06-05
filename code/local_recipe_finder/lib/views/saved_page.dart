@@ -40,13 +40,17 @@ class SavedPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 final recipe = savedRecipes[index];
                 return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    final updatedRecipe = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) => RecipeDetailsPage(recipe: recipe),
                       ),
                     );
+                    if (updatedRecipe != null) {
+                      final provider = Provider.of<LocalRecipeFinderProvider>(context, listen: false);
+                      provider.updatedRecipe(updatedRecipe);
+                    }
                   },
                 child: Card(
                   margin: const EdgeInsets.all(12),
