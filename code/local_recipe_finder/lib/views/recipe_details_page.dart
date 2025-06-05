@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:local_recipe_finder/providers/local_recipe_finder_provider.dart';
+import 'package:provider/provider.dart';
 import '../models/recipe.dart';
+import 'package:isar/isar.dart';
 
 /// A page to view full details of a single recipe,
 /// including an editable notes section similar to a journal entry.
@@ -29,10 +32,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.recipe.name),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(widget.recipe.name), centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -63,8 +63,8 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
             ),
             const SizedBox(height: 8),
             ...widget.recipe.instructions.asMap().entries.map(
-                  (entry) => Text("${entry.key + 1}. ${entry.value}"),
-                ),
+              (entry) => Text("${entry.key + 1}. ${entry.value}"),
+            ),
             const SizedBox(height: 24),
 
             const Text(
@@ -78,7 +78,9 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
               initialValue: currentNotes,
               maxLines: 5,
               decoration: InputDecoration(
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 hintText: "Write any notes about this recipe here",
               ),
               onChanged: (value) {
@@ -104,7 +106,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
 
   /// Creates an updated Recipe object with the new notes and
   /// returns it to the previous screen via Navigator.pop
-  void _popBack() {
+  Future<void> _popBack() async {
     final updatedRecipe = Recipe(
       id: widget.recipe.id,
       name: widget.recipe.name,
@@ -114,6 +116,17 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
       instructions: widget.recipe.instructions,
       notes: currentNotes,
     );
+
+    final provider = Provider.of<LocalRecipeFinderProvider>(
+      context,
+      listen: false,
+    );
+
+    // Save to Isar database
+    await provider.isar.writeTxn(() async {
+      await provider.isar.recipes.put(updatedRecipe);
+    });
+
     Navigator.pop(context, updatedRecipe);
   }
 }

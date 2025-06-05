@@ -4,11 +4,20 @@ import 'package:local_recipe_finder/views/home_page.dart';
 import 'package:local_recipe_finder/views/saved_page.dart';
 import 'package:provider/provider.dart';
 import '../providers/local_recipe_finder_provider.dart';
+import 'package:isar/isar.dart';
+//import 'package:path_provider/path_provider.dart';
 
-void main() {
+void main() async {
+  //Are used to make Isar run in a Flutter environment.
+  WidgetsFlutterBinding.ensureInitialized();
+  //final dir = await getApplicationDocumentsDirectory();
+  final isar = await Isar.open([
+    RecipeSchema,
+  ], directory: ''); //, directory: dir.path);
+
   runApp(
     ChangeNotifierProvider(
-      create: (_) => LocalRecipeFinderProvider(),
+      create: (_) => LocalRecipeFinderProvider(isar),
       child: const MainApp(),
     ),
   );
