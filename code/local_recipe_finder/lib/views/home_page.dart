@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
       context,
       listen: false,
     );
-    provider.fetchRecipesByLocation("Canadian"); // sample area
+    provider.fetchRecipesByLocation("Mexican"); // sample area
   }
 
   void _panStart(DragStartDetails details, LocalRecipeFinderProvider provider) {
