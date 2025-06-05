@@ -12,10 +12,13 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
   final Isar isar;
 
   LocalRecipeFinderProvider(this.isar) {
-    // Load saved recipes and all recipes synchronously on provider init
-    likedRecipes = isar.recipes.where().findAllSync();
-    _recipes = isar.recipes.where().findAllSync();
-    notifyListeners(); // notify UI after loading
+    _loadInitialData();
+  }
+
+  Future<void> _loadInitialData() async {
+    likedRecipes = await isar.recipes.where().findAll();
+    _recipes = await isar.recipes.where().findAll();
+    notifyListeners();
   }
 
   // Private list to store fetched recipes

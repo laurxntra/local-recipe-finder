@@ -19,17 +19,19 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
   @override
   void initState() {
     super.initState();
+    _controller = TextEditingController();
 
-    final noteProvider = Provider.of<NotesProvider>(context, listen: false);
-    noteProvider.reset(widget.recipe.notes ?? '');
-
-    _controller = TextEditingController(text: noteProvider.note);
-
-    _controller.addListener(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final noteProvider = Provider.of<NotesProvider>(context, listen: false);
-      if (_controller.text != noteProvider.note) {
-        noteProvider.setNote(_controller.text);
-      }
+      noteProvider.reset(widget.recipe.notes ?? '');
+      _controller.text = noteProvider.note;
+
+      _controller.addListener(() {
+        final noteProvider = Provider.of<NotesProvider>(context, listen: false);
+        if (_controller.text != noteProvider.note) {
+          noteProvider.setNote(_controller.text);
+        }
+      });
     });
   }
 
