@@ -6,10 +6,13 @@ import 'package:local_recipe_finder/util/recipe_mocker.dart';
 import '../models/recipe.dart';
 import 'dart:async';
 
+
 /// Provider class that manages fetching/storing recipes from TheMealDB API
 /// Filters recipes by a given location/area and exposes loading data and data
 class LocalRecipeFinderProvider extends ChangeNotifier {
   final Isar isar;
+
+
   LocalRecipeFinderProvider(this.isar) {
     _recipes = isar.recipes.where().findAllSync();
   }
@@ -20,6 +23,10 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
   // List to store saved recipes
   List<Recipe> likedRecipes = [];
 
+  int _currentIndex = 0;
+
+  int get currentIndex => _currentIndex;
+
   // Getter to get recipes list
   List<Recipe> get recipes => _recipes;
 
@@ -28,6 +35,25 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
 
   // Getter for loading state
   bool get isLoading => _isLoading;
+
+  void nextRecipe() {
+    if (_currentIndex < _recipes.length) {
+      _currentIndex++;
+      notifyListeners();
+    }
+  }
+
+  void previousRecipe() {
+    if (_currentIndex > 0) {
+      _currentIndex--;
+      notifyListeners();
+    }
+  }
+
+  void resetIndex() {
+    _currentIndex = 0;
+    notifyListeners();
+  }
 
   void updatedRecipe (Recipe updatedRecipe) {
     final index = likedRecipes.indexWhere((r) => r.id == updatedRecipe.id);
@@ -42,6 +68,7 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
   /// - area: the location to filter recipes by
   Future<void> fetchRecipesByLocation(String area) async {
     // Indicates loading started
+    //_currentIndex = 0;
     _isLoading = true;
     notifyListeners();
 

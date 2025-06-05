@@ -5,6 +5,7 @@ import '../models/recipe.dart';
 import '../providers/local_recipe_finder_provider.dart';
 import 'package:local_recipe_finder/providers/position_provider.dart';
 
+
 /// The home page is where users can browse local recipes via swipe gestures
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,7 +18,6 @@ class _HomePageState extends State<HomePage> {
   // Tracks horizontal drag distance during swiping gestures
   double _dragX = 0;
   // Index of the current recipe being shown to the user
-  int _currentIndex = 0;
 
   @override
   /// Called when the widget is inserted into the tree
@@ -59,16 +59,17 @@ class _HomePageState extends State<HomePage> {
 
     // If the user swipes right, they saved the recipe
     if (_dragX > swipe) {
-      provider.saveRecipe(provider.recipes[_currentIndex]);
+      provider.saveRecipe(provider.recipes[provider.currentIndex]);
       setState(() {
+        provider.saveRecipe(provider.recipes[provider.currentIndex]);
+        provider.nextRecipe();
         _dragX = 0;
-        _currentIndex++;
       });
       // If the user swipes left, they skip the recipe
     } else if (_dragX < -swipe) {
       setState(() {
         _dragX = 0;
-        _currentIndex++;
+        provider.nextRecipe();
       });
       // Drag is not far enough to "qualify" as a swipe
     } else {
@@ -105,7 +106,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     // If the user swipes through all the available recipes at that given location
-    if (_currentIndex >= provider.recipes.length) {
+    if (provider.currentIndex >= provider.recipes.length) {
       return Scaffold(
         appBar: AppBar(title: const Text("Local Recipe Finder")),
         body: const Center(child: Text("No more recipes. Come back later!")),
@@ -113,7 +114,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     // Recipe to display
-    final recipe = provider.recipes[_currentIndex];
+    final recipe = provider.recipes[provider.currentIndex];
 
     return Scaffold(
       appBar: AppBar(
