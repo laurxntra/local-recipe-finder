@@ -5,7 +5,6 @@ import '../models/recipe.dart';
 import '../providers/local_recipe_finder_provider.dart';
 import 'package:local_recipe_finder/providers/position_provider.dart';
 
-
 /// The home page is where users can browse local recipes via swipe gestures
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,11 +25,10 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     // Schedule the fetch to happen after the first frame is rendered
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<LocalRecipeFinderProvider>(
+      Provider.of<LocalRecipeFinderProvider>(
         context,
         listen: false,
-      );
-      provider.fetchRecipesByLocation("Mexican"); // sample area
+      ).fetchRecipesByLocation("Mexican"); // sample area
     });
   }
 
@@ -96,7 +94,9 @@ class _HomePageState extends State<HomePage> {
       builder: (context, provider, child) {
         // Displays loading indicator while recipes are loading
         if (provider.isLoading) {
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
         }
 
         // Displays the message "no recipes found..." if no recipes have been found
@@ -112,7 +112,9 @@ class _HomePageState extends State<HomePage> {
         if (provider.currentIndex >= provider.recipes.length) {
           return Scaffold(
             appBar: AppBar(title: const Text("Local Recipe Finder")),
-            body: const Center(child: Text("No more recipes. Come back later!")),
+            body: const Center(
+              child: Text("No more recipes. Come back later!"),
+            ),
           );
         }
 
@@ -139,7 +141,8 @@ class _HomePageState extends State<HomePage> {
               Expanded(
                 child: Center(
                   child: Semantics(
-                    label: 'Recipe card, Swipe right to like, swipe left to skip',
+                    label:
+                        'Recipe card, Swipe right to like, swipe left to skip',
                     child: GestureDetector(
                       onPanStart: (details) => _panStart(details, provider),
                       onPanUpdate: (details) => _panUpdate(details, provider),
@@ -187,7 +190,9 @@ class _HomePageState extends State<HomePage> {
                                     container: true,
                                     child: Text(
                                       "Ingredients:",
-                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                   ...recipe.ingredients.map(
@@ -203,7 +208,9 @@ class _HomePageState extends State<HomePage> {
                                     container: true,
                                     child: Text(
                                       "Instructions:",
-                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                   ...recipe.instructions.map(
@@ -250,7 +257,7 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: _dragX > 10 ? Colors.green : Colors.black
+                              color: _dragX > 10 ? Colors.green : Colors.black,
                             ),
                           ),
                         ],

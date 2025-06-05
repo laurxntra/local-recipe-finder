@@ -8,7 +8,8 @@ import '../providers/local_recipe_finder_provider.dart';
 import 'providers/position_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:isar/isar.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,11 +18,19 @@ Future<void> main() async {
 
   final isar = await Isar.open([RecipeSchema], directory: dir.path);
 
+  final prefs = await SharedPreferences.getInstance();
+  String? userId = prefs.getString('userId');
+  if (userId == null) {
+    userId = const Uuid().v4(); // generate random UUID if first time
+    await prefs.setString('userId', userId);
+  }
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => LocalRecipeFinderProvider(isar)),
+        ChangeNotifierProvider(
+          create: (_) => LocalRecipeFinderProvider(isar, userId!),
+        ),
         ChangeNotifierProvider(create: (_) => PositionProvider()),
         ChangeNotifierProvider(create: (_) => NotesProvider()),
       ],

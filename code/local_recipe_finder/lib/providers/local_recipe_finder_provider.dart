@@ -10,14 +10,15 @@ import 'dart:async';
 /// Filters recipes by a given location/area and exposes loading data and data
 class LocalRecipeFinderProvider extends ChangeNotifier {
   final Isar isar;
+  final String userId;
 
-  LocalRecipeFinderProvider(this.isar) {
+  LocalRecipeFinderProvider(this.isar, this.userId) {
     _loadInitialData();
   }
 
   Future<void> _loadInitialData() async {
-    likedRecipes = await isar.recipes.where().findAll();
-    _recipes = await isar.recipes.where().findAll();
+    likedRecipes = await isar.recipes.where().userIdEqualTo(userId).findAll();
+    _recipes = await isar.recipes.where().userIdEqualTo(userId).findAll();
     notifyListeners();
   }
 
@@ -75,7 +76,13 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    final existingRecipe = await isar.recipes.filter().locationEqualTo(area).findAll();
+    await isar.writeTxn(() async {
+      // Clear existing recipes for the user
+      await isar.recipes.filter().userIdEqualTo(userId).deleteAll();
+    });
+
+    final existingRecipe =
+        await isar.recipes.filter().locationEqualTo(area).findAll();
 
     if (existingRecipe.isNotEmpty) {
       _recipes = existingRecipe;
@@ -104,6 +111,7 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
             final id = meal['idMeal'] as String;
             final detailedRecipe = await fetchRecipeDetails(id, area);
             if (detailedRecipe != null) {
+              detailedRecipe.userId = userId;
               detailedRecipes.add(detailedRecipe);
             }
           }
@@ -156,17 +164,19 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
           final measure = meal['strMeasure$i'];
           if (ingredient != null && ingredient.toString().isNotEmpty) {
             ingredients.add(
-              '${measure?.toString().trim() ?? ''} ${ingredient.toString().trim()}'.trim(),
+              '${measure?.toString().trim() ?? ''} ${ingredient.toString().trim()}'
+                  .trim(),
             );
           }
         }
 
         final instructionsRaw = meal['strInstructions'] as String? ?? '';
-        List<String> instructions = instructionsRaw
-            .split(RegExp(r'\.\s+'))
-            .map((s) => s.trim())
-            .where((s) => s.isNotEmpty)
-            .toList();
+        List<String> instructions =
+            instructionsRaw
+                .split(RegExp(r'\.\s+'))
+                .map((s) => s.trim())
+                .where((s) => s.isNotEmpty)
+                .toList();
 
         return Recipe(
           name: meal['strMeal'] ?? 'Unknown',
@@ -175,6 +185,7 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
           instructions: instructions,
           location: area,
           notes: '',
+          userId: '',
         );
       }
     } catch (e) {
@@ -190,6 +201,8 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
   /// Parameters:
   /// - recipe: The recipe object to be saved
   Future<void> saveRecipe(Recipe recipe) async {
+    recipe.userId = userId;
+
     // Avoid duplicates by checking the id
     final exists = likedRecipes.any((r) => r.id == recipe.id);
     if (!exists) {

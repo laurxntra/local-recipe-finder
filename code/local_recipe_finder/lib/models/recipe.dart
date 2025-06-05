@@ -29,6 +29,9 @@ class Recipe {
   // Notes that can be added by the user for this recipe
   String? notes;
 
+  @Index()
+  late String userId;
+
   /// Constructor for creating a Recipe object when loading from Isar
   ///
   /// Parameters:
@@ -46,6 +49,7 @@ class Recipe {
     required this.ingredients,
     required this.instructions,
     required this.location,
+    required this.userId,
     this.notes = '',
   });
 
@@ -56,6 +60,7 @@ class Recipe {
     List<String>? ingredient,
     List<String>? instruction,
     String? notes,
+    String? userId,
   }) {
     return Recipe(
       id: id ?? this.id,
@@ -65,6 +70,7 @@ class Recipe {
       ingredients: ingredients ?? List<String>.from(this.ingredients),
       instructions: instructions ?? List<String>.from(this.instructions),
       notes: notes ?? this.notes,
+      userId: userId ?? this.userId,
     );
   }
 
@@ -86,6 +92,7 @@ class Recipe {
       instructions: List<String>.from(json['instructions'] ?? []),
       location: json['location'] ?? '',
       notes: json['notes'] ?? '',
+      userId: json['userId'] ?? '',
     );
   }
 
@@ -102,6 +109,7 @@ class Recipe {
       'instructions': instructions,
       'location': location,
       'notes': notes,
+      'userId': userId,
     };
   }
 
@@ -116,6 +124,7 @@ class Recipe {
       ingredients: ['Ingredient  1', 'Ingredient 2'],
       instructions: ['Instruction 1', 'Instruction 2'],
       location: 'Unknown',
+      userId: 'UserId',
     );
   }
 }
