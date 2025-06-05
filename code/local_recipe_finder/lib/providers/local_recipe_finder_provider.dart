@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:isar/isar.dart';
 import 'package:local_recipe_finder/util/recipe_mocker.dart';
 import '../models/recipe.dart';
 import 'dart:async';
@@ -8,6 +9,11 @@ import 'dart:async';
 /// Provider class that manages fetching/storing recipes from TheMealDB API
 /// Filters recipes by a given location/area and exposes loading data and data
 class LocalRecipeFinderProvider extends ChangeNotifier {
+  final Isar isar;
+  LocalRecipeFinderProvider(this.isar) {
+    _recipes = isar.recipes.where().findAllSync();
+  }
+
   // Private list to store fetched recipes
   List<Recipe> _recipes = [];
 
@@ -140,7 +146,7 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
                 .where((s) => s.isNotEmpty)
                 .toList();
 
-        print('it worked!');
+        //print('it worked!');
         // Creates and return a Recipe object populated with all the data
         return Recipe(
           name: meal['strMeal'] ?? 'Unknown',

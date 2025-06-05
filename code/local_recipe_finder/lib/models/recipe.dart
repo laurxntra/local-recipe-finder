@@ -1,8 +1,8 @@
 import 'package:isar/isar.dart';
-
+part 'recipe.g.dart';
 
 /// A model representing a saved/suggested recipe in the app
-/// 
+///
 /// This is used with Isar database to store recipes that users have either
 /// liked or being displayed based on the location
 @Collection()
@@ -29,7 +29,7 @@ class Recipe {
   String? notes;
 
   /// Constructor for creating a Recipe object when loading from Isar
-  /// 
+  ///
   /// Parameters:
   /// - id: unique id used by isar
   /// - name: name of recipe
@@ -49,13 +49,13 @@ class Recipe {
   });
 
   /// Factory constructor to create a Recipe from a JSON object
-  /// 
+  ///
   /// Used when parsing API responses into local Recipe object
-  /// 
+  ///
   /// Parameters:
   /// - json: A map containing keys for name, imageUrl, ingredients, instructions, location
   /// and notes
-  /// 
+  ///
   /// Returns:
   /// - A Recipe populated with the provided JSON data
   factory Recipe.fromJson(Map<String, dynamic> json) {
@@ -70,7 +70,7 @@ class Recipe {
   }
 
   /// Converts Recipe object into a JSON map
-  /// 
+  ///
   /// Returns:
   /// - A [Map<String, dynamic>] representing the recipe -- this is used for our API
   Map<String, dynamic> toJson() {
@@ -86,7 +86,7 @@ class Recipe {
   }
 
   /// Factory constructor to create a placeholder recipe object for loading screen / testing purpose
-  /// 
+  ///
   /// Returns:
   /// - A recipe with sample content
   factory Recipe.placeholder() {
@@ -95,7 +95,7 @@ class Recipe {
       imageUrl: '',
       ingredients: ['Ingredient  1', 'Ingredient 2'],
       instructions: ['Instruction 1', 'Instruction 2'],
-      location: 'Unknown'
+      location: 'Unknown',
     );
   }
 }
