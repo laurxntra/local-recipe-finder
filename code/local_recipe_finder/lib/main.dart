@@ -4,11 +4,15 @@ import 'package:local_recipe_finder/views/home_page.dart';
 import 'package:local_recipe_finder/views/saved_page.dart';
 import 'package:provider/provider.dart';
 import '../providers/local_recipe_finder_provider.dart';
+import 'providers/position_provider.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => LocalRecipeFinderProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => LocalRecipeFinderProvider()),
+        ChangeNotifierProvider(create: (_) => PositionProvider()),
+      ],
       child: const MainApp(),
     ),
   );

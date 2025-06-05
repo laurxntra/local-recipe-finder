@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/recipe.dart';
 import '../providers/local_recipe_finder_provider.dart';
+import 'package:local_recipe_finder/providers/position_provider.dart';
 
 /// The home page is where users can browse local recipes via swipe gestures
 class HomePage extends StatefulWidget {
