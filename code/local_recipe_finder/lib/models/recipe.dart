@@ -1,7 +1,5 @@
 import 'package:isar/isar.dart';
 
-part 'recipe.g.dart';
-
 
 /// A model representing a saved/suggested recipe in the app
 /// 

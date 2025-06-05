@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:local_recipe_finder/util/recipe_mocker.dart';
 import '../models/recipe.dart';
 import 'dart:async';
 
@@ -30,6 +31,9 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
     // Indicates loading started
     _isLoading = true;
     notifyListeners();
+
+    //this is for mock data
+    //_recipes = RecipeMocker.getMockRecipe;
 
     // Construct url to filter recipes by location
     final url = Uri.parse(
