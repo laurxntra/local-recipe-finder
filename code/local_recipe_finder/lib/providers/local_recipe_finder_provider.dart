@@ -116,6 +116,7 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
     final existingRecipe =
         await isar.recipes.filter().locationEqualTo(area).findAll();
 
+    // set recipes if exist and notify listeners
     if (existingRecipe.isNotEmpty) {
       _recipes = existingRecipe;
       _isLoading = false;
@@ -123,6 +124,7 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
       return;
     }
 
+    // call mealdb
     final url = Uri.parse(
       'https://www.themealdb.com/api/json/v1/1/filter.php?a=$area',
     );
@@ -139,6 +141,7 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
         } else {
           List<Recipe> detailedRecipes = [];
 
+          //get detailed recipes for each meal
           for (var meal in meals) {
             final id = meal['idMeal'] as String;
             final detailedRecipe = await fetchRecipeDetails(id, area);
@@ -159,7 +162,7 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
     } catch (e) {
       _recipes = [];
     }
-
+    // fetched data, so not loading anymore. notify listeners
     _isLoading = false;
     notifyListeners();
   }
@@ -189,7 +192,7 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
         }
 
         final meal = meals[0];
-
+        // extract ingredients and measures
         List<String> ingredients = [];
         for (int i = 1; i <= 20; i++) {
           final ingredient = meal['strIngredient$i'];
@@ -201,7 +204,7 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
             );
           }
         }
-
+        // extract instructions
         final instructionsRaw = meal['strInstructions'] as String? ?? '';
         List<String> instructions =
             instructionsRaw

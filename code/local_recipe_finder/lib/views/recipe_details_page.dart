@@ -39,7 +39,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(); // creates controller 
+    _controller = TextEditingController(); // creates controller
 
     // resets the recipe notes
     WidgetsBinding.instance.addPostFrameCallback((_) {
