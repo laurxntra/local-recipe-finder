@@ -3,6 +3,7 @@ import 'package:local_recipe_finder/views/recipe_details_page.dart';
 import 'package:provider/provider.dart';
 import '../models/recipe.dart';
 import '../providers/local_recipe_finder_provider.dart';
+// semantics added.
 
 /// Displays a scrollable list of recipes saved by the user
 class SavedPage extends StatelessWidget {
