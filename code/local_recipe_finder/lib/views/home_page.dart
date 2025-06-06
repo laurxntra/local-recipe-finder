@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:local_recipe_finder/util/location_utils.dart';
 import 'package:provider/provider.dart';
 import '../models/recipe.dart';
 import '../providers/local_recipe_finder_provider.dart';
 import 'package:local_recipe_finder/providers/position_provider.dart';
+import 'package:geocoding/geocoding.dart';
 
 /// The home page is where users can browse local recipes via swipe gestures
 class HomePage extends StatefulWidget {
@@ -17,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   // Tracks horizontal drag distance during swiping gestures
   double _dragX = 0;
   // Index of the current recipe being shown to the user
+  String? _lastArea;
 
   @override
   /// Called when the widget is inserted into the tree
@@ -25,10 +28,27 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     // Schedule the fetch to happen after the first frame is rendered
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<LocalRecipeFinderProvider>(
-        context,
-        listen: false,
-      ).fetchRecipesByLocation("Mexican"); // sample area
+      final positionProvider = context.read<PositionProvider>();
+      final recipeProvider = context.read<LocalRecipeFinderProvider>();
+
+      positionProvider.addListener(() async {
+        if (positionProvider.positionKnown) {
+          final lat = positionProvider.latitude!;
+          final long = positionProvider.longitude!;
+
+          final area = await getAreaFromCoords(lat, long);
+
+          if(_lastArea != area) {
+            _lastArea = area;
+            await recipeProvider.fetchRecipesByLocation(area);
+
+          }
+        }
+      });
+      // Provider.of<LocalRecipeFinderProvider>(
+      //   context,
+      //   listen: false,
+      // ).fetchRecipesByLocation("Mexican"); // sample area
     });
   }
 
@@ -125,14 +145,29 @@ class _HomePageState extends State<HomePage> {
           appBar: AppBar(
             title: const Text("Local Recipe Finder"),
             centerTitle: true,
-            bottom: const PreferredSize(
+            bottom: PreferredSize(
               preferredSize: Size.fromHeight(24),
               child: Padding(
                 padding: EdgeInsets.only(bottom: 8.0),
-                child: Text(
-                  '📍 Current Location: Richmond, British Columbia',
-                  style: TextStyle(fontSize: 14),
-                ),
+                child: Consumer<PositionProvider>(
+                  builder: (context, positionProvider, child) {
+                    String locationText;
+
+                    if (!positionProvider.positionKnown) {
+                      locationText = "Locating...";
+                    } else if (positionProvider.latitude != null && positionProvider.longitude != null) {
+                      locationText = "Lat: ${positionProvider.latitude!.toStringAsFixed(2)}, "
+                      "Lon: ${positionProvider.longitude!.toStringAsFixed(2)}";
+                    } else {
+                      locationText = "Location is unavailable";
+                    }
+                    return Text(
+                      '📍 Current Location: $locationText',
+                      style: const TextStyle(fontSize: 14),
+                    );
+                  }
+                )
+                
               ),
             ),
           ),

@@ -5,6 +5,7 @@ import 'package:isar/isar.dart';
 import 'package:local_recipe_finder/util/recipe_mocker.dart';
 import '../models/recipe.dart';
 import 'dart:async';
+import 'package:geocoding/geocoding.dart';
 
 /// Provider class that manages fetching/storing recipes from TheMealDB API
 /// Filters recipes by a given location/area and exposes loading data and data
