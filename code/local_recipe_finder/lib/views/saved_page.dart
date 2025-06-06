@@ -3,7 +3,6 @@ import 'package:local_recipe_finder/views/recipe_details_page.dart';
 import 'package:provider/provider.dart';
 import '../models/recipe.dart';
 import '../providers/local_recipe_finder_provider.dart';
-// semantics added.
 
 /// Displays a scrollable list of recipes saved by the user
 class SavedPage extends StatelessWidget {
@@ -38,25 +37,35 @@ class SavedPage extends StatelessWidget {
                 itemCount: savedRecipes.length,
                 itemBuilder: (context, index) {
                   final recipe = savedRecipes[index];
-                  return GestureDetector(
-                    onTap: () async {
-                      final updatedRecipe = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => RecipeDetailsPage(recipe: recipe),
-                        ),
-                      );
-                      if (updatedRecipe != null) {
-                        final provider = Provider.of<LocalRecipeFinderProvider>(
+
+                  final ingredientsListing = recipe.ingredients.join(", ");
+                  final ingredientsText =
+                      ingredientsListing.isNotEmpty
+                          ? ingredientsListing
+                          : "No ingredients available.";
+                  final semanticsLabeling =
+                      recipe.name.isNotEmpty ? recipe.name : "Recipe $index";
+
+                  return Semantics(
+                    label: semanticsLabeling,
+                    button: true,
+                    child: GestureDetector(
+                      onTap: () async {
+                        final updatedRecipe = await Navigator.push(
                           context,
-                          listen: false,
+                          MaterialPageRoute(
+                            builder: (_) => RecipeDetailsPage(recipe: recipe),
+                          ),
                         );
-                        provider.updatedRecipe(updatedRecipe);
-                      }
-                    },
-                    child: Semantics(
-                      label: 'Recipe Card for ${recipe.name}',
-                      button: true,
+                        if (updatedRecipe != null) {
+                          final provider =
+                              Provider.of<LocalRecipeFinderProvider>(
+                                context,
+                                listen: false,
+                              );
+                          provider.updatedRecipe(updatedRecipe);
+                        }
+                      },
                       child: Card(
                         margin: const EdgeInsets.all(12),
                         shape: RoundedRectangleBorder(
@@ -68,30 +77,22 @@ class SavedPage extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Recipe name
-                              Semantics(
-                                header: true,
-                                label: 'Recipe Name for: ${recipe.name}',
-                                child: Text(
-                                  recipe.name,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              Text(
+                                recipe.name,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                               const SizedBox(height: 8),
                               // Recipe image
-                              Semantics(
-                                label: 'Image for ${recipe.name}',
-                                image: true,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(
-                                    recipe.imageUrl,
-                                    height: 180,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.network(
+                                  recipe.imageUrl,
+                                  height: 180,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
                                 ),
                               ),
                               const SizedBox(height: 10),
@@ -105,13 +106,9 @@ class SavedPage extends StatelessWidget {
                               ),
                               const SizedBox(height: 10),
                               // Recipe instructions
-                              Semantics(
-                                label: 'Instructions for ${recipe.name}',
-                                header: true,
-                                child: Text(
-                                  'Instructions:',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
+                              const Text(
+                                'Instructions:',
+                                style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               Text(
                                 recipe.instructions.isNotEmpty
