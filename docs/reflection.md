@@ -55,6 +55,7 @@ We used many resources to understand our APIs and how to use flutter.
 - We ended up choosing to use MealDB.
  
 **Previous Assignments**
+
 We used previous code from AS5, AS6, and AS7 to implement geolocator, undo/redo, and isar. 
 
 ## Challenges
