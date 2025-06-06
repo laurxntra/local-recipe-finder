@@ -2,16 +2,38 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:isar/isar.dart';
-import 'package:local_recipe_finder/util/recipe_mocker.dart';
 import '../models/recipe.dart';
 import 'dart:async';
 
-/// Provider class that manages fetching/storing recipes from TheMealDB API
-/// Filters recipes by a given location/area and exposes loading data and data
+/// This is a provider class that extends ChangeNotifier to notify listeners
+/// It loads the dat from isar and stores the recipes, liked recipes, and current index of viewing recipe
+/// It uses the MealDB API to fetch recipes based on area.
+/// Fields:
+/// - isar: instance of isar db used to store and retrieve recipes
+/// - userId: id of user running this app
+/// - _recipes: fetched recipes to allow swiping over
+/// - likedRecipes: saved recipes
+/// - _currentIndex: curr index of recipe being viewed
+/// - _isLoading: if data is loading
 class LocalRecipeFinderProvider extends ChangeNotifier {
-  final Isar isar;
-  LocalRecipeFinderProvider(this.isar) {
-    _recipes = isar.recipes.where().findAllSync();
+  final Isar isar; // instance of Isar database
+  final String userId; // unique user ID
+
+  /// This is the constructor for the provider. It loads the data from the db
+  /// parameters:
+  /// - isar: instance of Isar db that stores user data
+  /// - userId: unique ID of user running this app, used to filter isar info
+  LocalRecipeFinderProvider(this.isar, this.userId) {
+    _loadInitialData();
+  }
+
+  /// Loads initial data from Isar, filtered from userId. Notifies listeners when data is loaded.
+  /// Parameters: N/A
+  /// Returns: N/A
+  Future<void> _loadInitialData() async {
+    likedRecipes = await isar.recipes.where().userIdEqualTo(userId).findAll();
+    _recipes = await isar.recipes.where().userIdEqualTo(userId).findAll();
+    notifyListeners();
   }
 
   // Private list to store fetched recipes
@@ -19,6 +41,12 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
 
   // List to store saved recipes
   List<Recipe> likedRecipes = [];
+
+  // private index to track in _recipes the user is currently swiping on
+  int _currentIndex = 0;
+
+  // getter for _currentIndex
+  int get currentIndex => _currentIndex;
 
   // Getter to get recipes list
   List<Recipe> get recipes => _recipes;
@@ -29,79 +57,109 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
   // Getter for loading state
   bool get isLoading => _isLoading;
 
+  /// Sets the next recipe by incrementing index and notifying listeners, if it
+  /// hasn't reached the end of the list
+  /// Parameters: N/A
+  /// Returns: N/A
+  void nextRecipe() {
+    if (_currentIndex < _recipes.length) {
+      _currentIndex++;
+      notifyListeners();
+    }
+  }
+
+  /// Sets the previous recipe by decrementing index and notifying listeners, if it
+  /// hasn't reached the start of the list
+  /// Parameters: N/A
+  /// Returns: N/A
+  void previousRecipe() {
+    if (_currentIndex > 0) {
+      _currentIndex--;
+      notifyListeners();
+    }
+  }
+
+  /// Resets the current index to 0 and notifies listeners
+  /// Parameters: N/A
+  /// Returns: N/A
+  void resetIndex() {
+    _currentIndex = 0;
+    notifyListeners();
+  }
+
+  /// Updates a specific recipe in the likedRecipes list and notifies listeners.
+  /// if it is not found, does nothing.
+  /// Parameters:
+  /// - updatedRecipe: recipe with updated information
+  /// Returns: N/A
+  void updatedRecipe(Recipe updatedRecipe) {
+    final index = likedRecipes.indexWhere((r) => r.id == updatedRecipe.id);
+    if (index != -1) {
+      likedRecipes[index] = updatedRecipe;
+      notifyListeners();
+    }
+  }
+
   /// Fetches recipes filtered by location from TheMealDB API
   ///
   /// Parameters:
   /// - area: the location to filter recipes by
   Future<void> fetchRecipesByLocation(String area) async {
-    // Indicates loading started
     _isLoading = true;
     notifyListeners();
 
-    //this is for mock data
-    //_recipes = RecipeMocker.getMockRecipe;
+    await isar.writeTxn(() async {
+      // Clear existing recipes for the user
+      await isar.recipes.filter().userIdEqualTo(userId).deleteAll();
+    });
 
-    // this is to see if there is already a recipe
     final existingRecipe =
         await isar.recipes.filter().locationEqualTo(area).findAll();
 
     if (existingRecipe.isNotEmpty) {
-      // If recipes already exist for this area, load them from Isar
       _recipes = existingRecipe;
       _isLoading = false;
       notifyListeners();
       return;
     }
 
-    // Construct url to filter recipes by location
     final url = Uri.parse(
       'https://www.themealdb.com/api/json/v1/1/filter.php?a=$area',
     );
 
     try {
-      // HTTP get request
       final response = await http.get(url);
 
-      // Checking for a successful response
       if (response.statusCode == 200) {
-        // Decodes JSON response body
         final data = jsonDecode(response.body);
-        // Extracts the 'meals' array
         final meals = data['meals'] as List<dynamic>?;
 
-        // If no meals are found, clear the recipe list
         if (meals == null) {
           _recipes = [];
-          // Otherwise, prepare a list to hold recipe objects
         } else {
           List<Recipe> detailedRecipes = [];
 
-          // For each meal, fetch the information based off their ID
           for (var meal in meals) {
             final id = meal['idMeal'] as String;
             final detailedRecipe = await fetchRecipeDetails(id, area);
             if (detailedRecipe != null) {
+              detailedRecipe.userId = userId;
               detailedRecipes.add(detailedRecipe);
             }
           }
-          // Update the recipe list with the detailed recipes
           _recipes = detailedRecipes;
 
-          // Save the recipes to the Isar database
           await isar.writeTxn(() async {
             await isar.recipes.putAll(_recipes);
           });
         }
-        // An error has occurred, clear the recipes list
       } else {
         _recipes = [];
       }
-      // An error has occurred, clear the recipes list
     } catch (e) {
       _recipes = [];
     }
 
-    // Loading complete, now notify listeners
     _isLoading = false;
     notifyListeners();
   }
@@ -115,36 +173,27 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
   /// Returns:
   /// - A Recipe object populated with the data needed if successful, otherwise returns null
   Future<Recipe?> fetchRecipeDetails(String id, String area) async {
-    // Consturct URL to look up meal by ID
     final url = Uri.parse(
       'https://www.themealdb.com/api/json/v1/1/lookup.php?i=$id',
     );
 
     try {
-      // HTTP get request
       final response = await http.get(url);
 
-      // Checking if response is successful
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final meals = data['meals'] as List<dynamic>?;
 
-        // No meal details were found, so return null
         if (meals == null || meals.isEmpty) {
           return null;
         }
 
-        // Extracts the first meal detail object
         final meal = meals[0];
 
-        // Extracts ingredients with their measurements (limiting to 20)
         List<String> ingredients = [];
         for (int i = 1; i <= 20; i++) {
-          // Getting the ingredient name
           final ingredient = meal['strIngredient$i'];
-          // Getting the measurement amount
           final measure = meal['strMeasure$i'];
-          // If the ingredient is not empty, we're going to format the string to our list
           if (ingredient != null && ingredient.toString().isNotEmpty) {
             ingredients.add(
               '${measure?.toString().trim() ?? ''} ${ingredient.toString().trim()}'
@@ -152,10 +201,8 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
             );
           }
         }
-        // Instructions string from the API
-        final instructionsRaw = meal['strInstructions'] as String? ?? '';
 
-        // Splits instruction into individual steps
+        final instructionsRaw = meal['strInstructions'] as String? ?? '';
         List<String> instructions =
             instructionsRaw
                 .split(RegExp(r'\.\s+'))
@@ -163,8 +210,6 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
                 .where((s) => s.isNotEmpty)
                 .toList();
 
-        //print('it worked!');
-        // Creates and return a Recipe object populated with all the data
         return Recipe(
           name: meal['strMeal'] ?? 'Unknown',
           imageUrl: meal['strMealThumb'] ?? '',
@@ -172,25 +217,47 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
           instructions: instructions,
           location: area,
           notes: '',
+          userId: '',
         );
       }
-      // Returns null if any errors occurs
     } catch (e) {
-      print('an error as occured: $e');
+      print('an error has occurred: $e');
       return null;
     }
-    // Returns null if unsuccessful response
+
     return null;
   }
 
-  /// Adds a recipe to the list of saved recipes
+  /// Adds a recipe to the list of saved recipes and saves it in Isar
   ///
   /// Parameters:
   /// - recipe: The recipe object to be saved
-  void saveRecipe(Recipe recipe) {
-    if (!likedRecipes.contains(recipe)) {
+  Future<void> saveRecipe(Recipe recipe) async {
+    recipe.userId = userId;
+
+    // Avoid duplicates by checking the id
+    final exists = likedRecipes.any((r) => r.id == recipe.id);
+    if (!exists) {
       likedRecipes.add(recipe);
-      notifyListeners();
     }
+
+    await isar.writeTxn(() async {
+      final id = await isar.recipes.put(recipe);
+      if (recipe.id == null || recipe.id == 0) {
+        recipe.id = id;
+      }
+    });
+    notifyListeners();
+  }
+
+  /// Removes a saved recipe from the list and deletes from Isar
+  Future<void> removeRecipe(Recipe recipe) async {
+    likedRecipes.removeWhere((r) => r.id == recipe.id);
+    await isar.writeTxn(() async {
+      if (recipe.id != null) {
+        await isar.recipes.delete(recipe.id!);
+      }
+    });
+    notifyListeners();
   }
 }

@@ -28,6 +28,10 @@ class Recipe {
   // Notes that can be added by the user for this recipe
   String? notes;
 
+  // The user ID of the user who saved this recipe
+  @Index()
+  late String userId;
+
   /// Constructor for creating a Recipe object when loading from Isar
   ///
   /// Parameters:
@@ -45,8 +49,41 @@ class Recipe {
     required this.ingredients,
     required this.instructions,
     required this.location,
+    required this.userId,
     this.notes = '',
   });
+
+  /// Clones the current recipe object - makes a copy given the current data and sets the location to the current location.
+  /// Parameters:
+  /// - id: new id for the recipe, if null it will use the current id
+  /// - name: new name for the recipe, if null it will use the current name
+  /// - imageUrl: new image URL for the recipe, if null it will use the current imageUrl
+  /// - ingredient: new list of ingredients
+  /// - instruction: new list of instructions
+  /// - notes: new notes for the recipe, if null it will use the current notes
+  /// - userId: new userId for the recipe, if null it will use the current userId
+  /// Returns:
+  /// - A new Recipe object with the updated values
+  Recipe clone({
+    int? id,
+    String? name,
+    String? imageUrl,
+    List<String>? ingredient,
+    List<String>? instruction,
+    String? notes,
+    String? userId,
+  }) {
+    return Recipe(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      location: location,
+      imageUrl: imageUrl ?? this.imageUrl,
+      ingredients: ingredients,
+      instructions: instructions,
+      notes: notes ?? this.notes,
+      userId: userId ?? this.userId,
+    );
+  }
 
   /// Factory constructor to create a Recipe from a JSON object
   ///
@@ -66,6 +103,7 @@ class Recipe {
       instructions: List<String>.from(json['instructions'] ?? []),
       location: json['location'] ?? '',
       notes: json['notes'] ?? '',
+      userId: json['userId'] ?? '',
     );
   }
 
@@ -82,6 +120,7 @@ class Recipe {
       'instructions': instructions,
       'location': location,
       'notes': notes,
+      'userId': userId,
     };
   }
 
@@ -96,6 +135,7 @@ class Recipe {
       ingredients: ['Ingredient  1', 'Ingredient 2'],
       instructions: ['Instruction 1', 'Instruction 2'],
       location: 'Unknown',
+      userId: 'UserId',
     );
   }
 }

@@ -1,2 +1,17 @@
 **Addressing a Human Need**  
-- The need our app addresses is the fact that many people in the United States feel incapable of cooking with a lack of skills necessary to learn how to cook effectively and have the food they cook taste good. This can come from a variety of reasons, like a lack of confidence or unfamiliarity with cooking in general. We sought news stories to gather existing evidence to identify this issue since it seemed like a valid problem that people of all age ranges have, especially when they're first starting to live on their own, and we found that around 28% of Americans don't cook (https://www.delish.com/food/news/a38951/one-third-of-americans-do-not-know-how-to-cook/). Because of this, combined with the general input we received from our SUS testing after we implemented the application (which isn't considered as part of identifying the need, but rather supplements the reasoning for going forward with this human need after we had already decided on this application), we had confidence in approaching this problem with the solution we present by creating an application that focuses on helping people find recipes in an easy and fast manner, where they can feel confident in learning how to cook with the ingredients needed for every recipe and storing all of a user's saved recipes for later.
+
+We chose options 1 and 2 to establish the existing need that our app addresses. We knew we wanted to make an app in the food and recipe space. So, firstly, we interviewed 10 people about what kinds of problems they face with cooking and finding recipes. 90% (9/10) of the interviewees mentioned that their goal when cooking is to explore new recipes and try local cuisines. They said that generally, they only cook the basic foods that they know (salads, sandwiches, food from their home country), but they would like to find recipes that their current location is known for. Some of the interviewees mentioned that as living in Seattle, they didn't think that Washington or hte Pacific Northwest was really known for special food, so they are interested in learning more about it. 
+
+Additionally, we did some research to support this information. Many people in the United States feel incapable of cooking because they lack the necessary skills to cook tasty food, and thus feel motivated to eat at restaurants instead. This can come from a lack of confidence or unfamiliarity with cooking. We sought news stories to gather existing evidence to get more details about this issue, since it seemed like a valid problem that people of all age ranges could have; specifically, because we had intervieweed many people in the young adult/college-student age range, we felt that people who just are starting to live alone could face this problem. Through some research, we found that around 28% of Americans don't cook (https://www.delish.com/food/news/a38951/one-third-of-americans-do-not-know-how-to-cook/) because of these varieties of reasons. 
+
+Thus, we established a need for a way to find easy recipes and be able to explore recipes that your area is known for. We wanted to make an app where you don't need to already have in mind what to search in the app - it is for people who may not know how to cook or may not know what recipes to cook. Our app, Local Recipe Finder, therefore allows users to swipe (like/dislike) on recipes that their location is known for, see all the recipe information with detailed instructions for people who don't know how to cook, and save their recipes and add notes for them.
+
+As a note, here are the names of the 10 people who we interviewed:
+- Shashank
+- Kavya
+- Gabriel
+- Maria
+- Justin
+- Chloe
+- Julia
+- The other 3 people did not feel comfortable sharing their names. 
