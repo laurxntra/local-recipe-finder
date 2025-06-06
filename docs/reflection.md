@@ -12,7 +12,8 @@ Here are some of the course topics we applied:
 -  data persistance - we used Isar database to persistently store the user's saved recipes and notes. We used SharedPreferences to store a device-specific user id so the user can see only their data. Overall, with this, users could open the app with their saved recipes without having to save/like recipes all over again. 
 - Another course topic we applied was modularizing our code into multiple providers, where each provider handles storing different type of data. We had a Provider that managed the state of recipes that needed to display on the home screen, so that if we needed to show the recipes on the home page, they would be updated correctly as a result for the user to swipe left or right on. 
 - With this, two more course topics we applied were through our use of APIs and phone sensors, where the MealDB API we used would fetch current local recipes given a general location. We used the GPS phone sensor as taught in lecture to actually get the user's location and not only display it on the homepage, but also input it when fetching recipes. 
-
+- We also implemented gesture detection with onPan to allow for swiping.
+- We also implemented undo/redo for the notes.
 ## Citations
 ### Here we cite anything or anyone that assisted us in creation our solution
 

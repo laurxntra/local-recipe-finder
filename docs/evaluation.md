@@ -1,1 +1,151 @@
-TODO
+# Usability Evaluation
+
+## SUS Testing Results
+Note that question numbers are attached to results, so a response for question 1 would be in the format [1. 3], where 3 is the answer for question 1.
+- Kavya
+  - 1. 5
+  - 2. 1
+  - 3. 5
+  - 4. 2
+  - 5. 5
+  - 6. 1
+  - 7. 5
+  - 8. 2
+  - 9. 4
+  - 10. 1
+  - SUS score: 92.5
+  - Usability subscore: 93.75
+  - Learnability subscore: 87.5
+- Shashank
+  - 1. 5
+  - 2. 1
+  - 3. 5
+  - 4. 1
+  - 5. 5
+  - 6. 1
+  - 7. 5
+  - 8. 1
+  - 9. 5
+  - 10. 1
+  - SUS score: 100
+  - Usability subscore: 100 
+  - Learnability subscore: 100 
+- Gabriel
+  - 1. 5
+  - 2. 2
+  - 3. 5
+  - 4. 1
+  - 5. 4
+  - 6. 3
+  - 7. 4
+  - 8. 1
+  - 9. 4
+  - 10. 2
+  - SUS score: 82.5
+  - Usability subscore: 81.25
+  - Learnability subscore: 87.5
+- Maria
+  - 1. 5
+  - 2. 2
+  - 3. 5
+  - 4. 1
+  - 5. 5
+  - 6. 1
+  - 7. 5
+  - 8. 1
+  - 9. 4
+  - 10. 1
+  - SUS score: 95
+  - Usability subscore: 93.75
+  - Learnability subscore: 100
+- Justin
+  - 1. 5
+  - 2. 2
+  - 3. 5
+  - 4. 1
+  - 5. 5
+  - 6. 3
+  - 7. 5
+  - 8. 2
+  - 9. 4
+  - 10. 1
+  - SUS score: 87.5
+  - Usability subscore: 84.375
+  - Learnability subscore: 100
+- Chloe
+  - 1. 5
+  - 2. 2
+  - 3. 5
+  - 4. 1
+  - 5. 5
+  - 6. 2
+  - 7. 5
+  - 8. 1
+  - 9. 5
+  - 10. 1
+  - SUS score: 95
+  - Usability subscore: 93.75
+  - Learnability subscore: 100
+- Julia
+  - 1. 5
+  - 2. 2
+  - 3. 5
+  - 4. 1
+  - 5. 5
+  - 6. 2
+  - 7. 5
+  - 8. 2
+  - 9. 4
+  - 10. 2
+  - SUS score: 87.5
+  - Usability subscore: 87.5
+  - Learnability subscore: 87.5
+- Unnamed Person 1 (didn't want to share name)
+  - 1. 5
+  - 2. 2
+  - 3. 5
+  - 4. 1
+  - 5. 5
+  - 6. 2
+  - 7. 4
+  - 8. 3
+  - 9. 3
+  - 10. 2
+  - SUS score: 80
+  - Usability subscore: 78.125
+  - Learnability subscore: 87.5
+- Unnamed Person 2 (didn't want to share name)
+  - 1. 5
+  - 2. 2
+  - 3. 5
+  - 4. 1
+  - 5. 5
+  - 6. 2
+  - 7. 5
+  - 8. 2
+  - 9. 5
+  - 10. 1
+  - SUS score: 92.5
+  - Usability subscore: 90.625
+  - Learnability subscore: 100
+- Unnamed Person 3 (didn't want to share name)
+  - 1. 5
+  - 2. 1
+  - 3. 5
+  - 4. 1
+  - 5. 4
+  - 6. 2
+  - 7. 4
+  - 8. 2
+  - 9. 4
+  - 10. 2
+  - SUS score: 85
+  - Usability subscore: 84.375
+  - Learnability subscore: 87.5
+
+- Overall SUS score: 90 (rounded from 89.7 average)
+- Overall usability subscore: 87.5 (rounded from 87.5 average)
+- Overall learnability subscore: 93 (rounded from 93.75 average)
+
+## Analysis
+Based on this, we believe that our app is very usable. We learned that there is some room for improvement in making it easier to learn. One idea for the future that we have for this is to add text or tooltips explaining what the app is about, in the app itself and on the homepage. For example, we already have one "tooltip" on the homepage explaining to swipe right for liking and swipe left for disliking. These kinds of helpful tips make apps learnable and having more of them would be better. We also believe that in general, because the concept of our app is quite simple (view recipe and save it), that is what makes it quite easy to use and learn. 
