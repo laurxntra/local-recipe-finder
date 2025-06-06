@@ -45,10 +45,9 @@ class _HomePageState extends State<HomePage> {
           // final placemarks = await placemarkFromCoordinates(lat, long);
           // final country = placemarks.isNotEmpty ? placemarks.first.country : null;
 
-          if(_lastArea != area) {
+          if (_lastArea != area) {
             _lastArea = area;
             await recipeProvider.fetchRecipesByLocation(area);
-
           }
 
           if (mounted && _countryName != country) {
@@ -163,21 +162,21 @@ class _HomePageState extends State<HomePage> {
               child: Padding(
                 padding: EdgeInsets.only(bottom: 8.0),
                 //child: Consumer<PositionProvider>(
-                  //builder: (context, positionProvider, child) {
-                    //String locationText;
+                //builder: (context, positionProvider, child) {
+                //String locationText;
 
-                    // if (!positionProvider.positionKnown) {
-                    //   locationText = "Locating...";
-                    // } else if (positionProvider.latitude != null && positionProvider.longitude != null) {
-                    //   locationText = "Lat: ${positionProvider.latitude!.toStringAsFixed(2)}, "
-                    //   "Lon: ${positionProvider.longitude!.toStringAsFixed(2)}";
-                    // } else {
-                    //   locationText = "Location is unavailable";
-                    // }
-                    child: Text(
-                      '📍 Current Location: ${_countryName ?? "Locating..."}',
-                      style: const TextStyle(fontSize: 14),
-                    ),
+                // if (!positionProvider.positionKnown) {
+                //   locationText = "Locating...";
+                // } else if (positionProvider.latitude != null && positionProvider.longitude != null) {
+                //   locationText = "Lat: ${positionProvider.latitude!.toStringAsFixed(2)}, "
+                //   "Lon: ${positionProvider.longitude!.toStringAsFixed(2)}";
+                // } else {
+                //   locationText = "Location is unavailable";
+                // }
+                child: Text(
+                  '📍 Current Location: ${_countryName ?? "Locating..."}',
+                  style: const TextStyle(fontSize: 14),
+                ),
               ),
             ),
           ),
