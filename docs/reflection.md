@@ -7,7 +7,18 @@ You must mention if you used significant portions of of the starter code given t
 You must include links to all StackOverflow, Medium, blogs, or other articles you used.
 If you used any Generative AI (ChatGPT, Gemini, CodePilot, or the like), please include the prompt(s) you used and how the result was or was not helpful.
 If you did not use any resources beyond classroom/flutter docs, please state so explicitly.
-  - TODO: Lauren + Jaime
+  - https://pub.dev/packages/geolocator
+  - https://api.flutter.dev/flutter/widgets/GestureDetector-class.html
+  - https://docs.flutter.dev/cookbook/networking/fetch-data
+  - https://api.flutter.dev/flutter/widgets/PopScope-class.html
+  - https://stackoverflow.com/questions/66279804/- flutter-navigator-2-0-how-to-return-data-from-a-screen
+  - https://stackoverflow.com/questions/77357118/getting-the-other-values-in-a-record-if-given-the-id-in-isar-database-using-flut
+  - https://medium.com/@viachaslau.pratasenia/the-easiest-way-to-use-environments-in-flutter-fa7b2cf0ed8d,
+  - https://www.themealdb.com/api.php,
+  - https://medium.com/@tamilnambicse/building-a-recipe-search-app-with-flutter-and-the-edamam-api-part-1-70e86cdf1c04,
+  - https://pub.dev/documentation/swipe_cards/latest/,
+  - https://anupkumarpanwar.medium.com/tinder-like-swipe-cards-in-flutter-2865a76158e3,
+  - https://github.com/AnupKumarPanwar/swipe_cards
 - Discuss how doing this project challenged and/or deepened each of your understanding of these topics.
   - This project deepened our understanding of the topics mentioned previously since we had to integrate a completely different API than what we were used to using in class to update our recipes displaying. We were able to identify an adequate API for our use and purpose with this app, and we think that's important and worth mentioning, since we had several choices in terms of the API we wanted to utilize for this application, since there exists more than 1 API for finding recipes. Additionally, we deepened our knowledge of Providers as a result, since we had to identify what state we wanted to keep track of and manage, and since the previous assignments would heavily hint as to what state we would have to keep track of, it was a great experience to be able to identify what we wanted to keep track of in the Provider we had. 
 - Describe what changed from your original concept to your final implementation and explain why your group made those changes from your original design vision.
