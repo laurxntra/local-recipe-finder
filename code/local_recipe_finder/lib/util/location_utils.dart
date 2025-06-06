@@ -36,7 +36,6 @@ List<String> getAreaFromCoords(double lat, double lng) {
     }
   }
 
-  print("couldn't find, so defaulting to [Chinese, China]");
   return ["Chinese", "China"]; // default fallback
 }
 

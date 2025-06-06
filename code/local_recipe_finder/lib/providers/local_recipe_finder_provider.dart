@@ -221,7 +221,6 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      print('an error has occurred: $e');
       return null;
     }
 
