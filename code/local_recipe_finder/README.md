@@ -26,17 +26,23 @@ All the dependencies in the app can be viewed in `pubspec.yaml`. Notably, some a
 
 ## Layout of Project Structure
 
-You should also include a guide to the layout of your project structure (what files/classes implement what functionality). Think of this section as a guide to help the teaching team navigate what is important to look at for assessment. Note: you do not need to include all of the folders in your project here, focus on what is in lib and assets or other directories not associated with building the app (such as android, ios, macos, etc.)
-
-Here is the layout of this repository
+Here is the layout of this repository.
 
 `code/local_recipe_finder`: this includes the project
   - `lib/`: this includes the actual project code with widgets to render
     - `/main.dart`: this is the entry point into the app
-    - `models/`: this includes our Recipe model (data structure)
+    - `models/`: this includes our models/global data structures
+      - `recipe.dart`: this is the class for the Recipe data structure. It generates `recipe.g.dart` for isar
     - `providers/`: this includes thet 3 providers for the app: LocalRecipeFinderProvider, NotesProvider, and PositionProvider
-    - `util/`: this includes utility functions for converting a location to a general area
+      - `local_recipe_finder_provider.dart` stores the relevant recipes to swipe through, the user's saved recipes, and the recipe the user is currently swiping on.
+      - `notes_provider.dart` stores the notes for the recipe the user is currently viewing, and lists for implementing undo/redo
+      - `position_provider.dart` stores the user's location information and whether it is known or if there exists an error fetching it.
+    - `util/`: this includes utility functions
+      - `location_utils.dart`: this includes a utility function for converting a location (lat/long) into a general area/country. It uses conditionals based on known coordinate ranges. 
     - `views/`: this includes the views for the main pages of the app, such as the homepage, recipe details page, and thet saved page
+      - `home_page.dart` shows the current location and recipe to swipe on.
+      - `recipe_details_page.dart` shows a specific recipe and the notes textbox for it.
+      - `saved_page.dart` shows the page with the list of all user's saved recipes.
     - The other folders like `ios/`, `android/`, `macos/`, `linux/`, `web/`, and `windows/` include configuration for running the app on all those places respectively
     - `/pubspec.yaml`: this file includes all the dependencies for the app that need to be installed
 
