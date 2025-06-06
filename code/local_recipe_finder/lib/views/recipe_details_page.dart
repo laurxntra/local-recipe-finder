@@ -99,7 +99,8 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
             const SizedBox(height: 8),
             ...widget.recipe.ingredients.map(
               (item) => Semantics(
-                label: 'Ingredient: $item',
+                label: '{$item}',
+                excludeSemantics: true,
                 child: Text("- $item")
               ),
             ),
@@ -115,6 +116,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
             ...widget.recipe.instructions.asMap().entries.map(
                   (entry) => Semantics(
                     label: 'Step ${entry.key + 1}: ${entry.value}',
+                    excludeSemantics: true,
                     child: Text("${entry.key + 1}. ${entry.value}"),
                   ),
             ),

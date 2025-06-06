@@ -260,7 +260,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   ...recipe.instructions.map(
                                     (step) => Semantics(
-                                      label: 'Instructions: $step',
+                                      label: '{$step}',
                                       excludeSemantics: true,
                                       child: Text("- $step"),
                                     ),
