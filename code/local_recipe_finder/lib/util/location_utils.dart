@@ -1,8 +1,14 @@
-import 'package:geocoding/geocoding.dart';
-
+/// This function gets the general area given the latitude and longitude coordinates.
+/// It returns a size-2 list containing the area name and country name.
+/// If the coordinates do not match any known area, it defaults to "American" and "United States" because that
+/// is where the developers of this app are located and thus is the most probable area to be used.
+/// Parameters:
+/// - lat: latitude of the coordinates
+/// - lng: longitude of the coordinates
+/// Returns: A size-2 list containing the area name and country name
 List<String> getAreaFromCoords(double lat, double lng) {
   // Each entry: [areaName, countryName, minLat, maxLat, minLng, maxLng]
-  print("lat: $lat, lng: $lng");
+  // These ranges per country were obtained using Google.com.
   final countries = [
     ["American", "United States", 24.5, 49.4, -125.0, -66.9],
     ["Canadian", "Canada", 41.7, 83.1, -141.0, -52.6],

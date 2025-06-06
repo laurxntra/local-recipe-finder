@@ -1,39 +1,54 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:local_recipe_finder/util/location_utils.dart';
 import 'package:provider/provider.dart';
-import '../models/recipe.dart';
 import '../providers/local_recipe_finder_provider.dart';
 import 'package:local_recipe_finder/providers/position_provider.dart';
-import 'package:geocoding/geocoding.dart';
 
-/// The home page is where users can browse local recipes via swipe gestures
+/// This class is the view for the homepage.
+/// It extends StatefulWidget to allow it to manage state.
+/// It shows a recipe one-by-one that is swipeable.
+/// Also it shows user's current country location.
+/// Fields:
+/// - _dragX: tracks horizontal drag distance when swiping
+/// - _lastArea: area user was last in/was last calculated
+/// - _countryName: name of country user is in
 class HomePage extends StatefulWidget {
+  /// Constructor for the HomePage widget, initializes it
   const HomePage({super.key});
 
+  /// Creates state for this widget
+  /// Parameters: N/A
+  /// Returns: A new instance of _HomePageState
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
+/// This class is the state for the HomePage widget. It extends `State<HomePage>` for this reason.
+/// Fields:
+/// - _dragX: tracks horizontal drag distance when swiping
+/// - _lastArea: area user was last in/was last calculated
+/// - _countryName: name of country user is in
 class _HomePageState extends State<HomePage> {
   // Tracks horizontal drag distance during swiping gestures
   double _dragX = 0;
-  // Index of the current recipe being shown to the user
+  // Area user was last in/was last calculated
   String? _lastArea;
-
+  // Name of country user is in
   String? _countryName;
 
+  /// This function initializes the state. It gets the location and fetches relevant recipes
+  /// once the widget is built.
+  /// Parameters: N/A
+  /// Returns: N/A
   @override
-  /// Called when the widget is inserted into the tree
-  /// Sets a timer that fetches new recipes from the provider every *BLANK* seconds
   void initState() {
     super.initState();
-    // Schedule the fetch to happen after the first frame is rendered
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final positionProvider = context.read<PositionProvider>();
       final recipeProvider = context.read<LocalRecipeFinderProvider>();
 
       positionProvider.addListener(() async {
+        // if we know position, calculate area
         if (positionProvider.positionKnown) {
           final lat = positionProvider.latitude!;
           final long = positionProvider.longitude!;
@@ -42,14 +57,13 @@ class _HomePageState extends State<HomePage> {
           final area = data[0];
           final country = data[1];
 
-          // final placemarks = await placemarkFromCoordinates(lat, long);
-          // final country = placemarks.isNotEmpty ? placemarks.first.country : null;
-
+          // If the area has changed, fetch new recipes
           if (_lastArea != area) {
             _lastArea = area;
             await recipeProvider.fetchRecipesByLocation(area);
           }
 
+          // If the country has changed, update the UI
           if (mounted && _countryName != country) {
             setState(() {
               _countryName = country;
@@ -57,19 +71,23 @@ class _HomePageState extends State<HomePage> {
           }
         }
       });
-      // Provider.of<LocalRecipeFinderProvider>(
-      //   context,
-      //   listen: false,
-      // ).fetchRecipesByLocation("Mexican"); // sample area
     });
   }
 
+  /// This function handles when the user first starts dragging/swiping
+  /// Parameters:
+  /// - details: the drag start details
+  /// - provider: the recipe provider used to access and save recipes
   void _panStart(DragStartDetails details, LocalRecipeFinderProvider provider) {
     setState(() {
       _dragX = 0;
     });
   }
 
+  /// This function handles the update of the drag/swipe gesture
+  /// Parameters:
+  /// - details: the drag update details
+  /// - provider: the recipe provider used to access and save recipes
   void _panUpdate(
     DragUpdateDetails details,
     LocalRecipeFinderProvider provider,
@@ -161,18 +179,6 @@ class _HomePageState extends State<HomePage> {
               preferredSize: Size.fromHeight(24),
               child: Padding(
                 padding: EdgeInsets.only(bottom: 8.0),
-                //child: Consumer<PositionProvider>(
-                //builder: (context, positionProvider, child) {
-                //String locationText;
-
-                // if (!positionProvider.positionKnown) {
-                //   locationText = "Locating...";
-                // } else if (positionProvider.latitude != null && positionProvider.longitude != null) {
-                //   locationText = "Lat: ${positionProvider.latitude!.toStringAsFixed(2)}, "
-                //   "Lon: ${positionProvider.longitude!.toStringAsFixed(2)}";
-                // } else {
-                //   locationText = "Location is unavailable";
-                // }
                 child: Text(
                   '📍 Current Location: ${_countryName ?? "Locating..."}',
                   style: const TextStyle(fontSize: 14),

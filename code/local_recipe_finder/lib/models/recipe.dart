@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:isar/isar.dart';
 part 'recipe.g.dart';
 
@@ -29,6 +28,7 @@ class Recipe {
   // Notes that can be added by the user for this recipe
   String? notes;
 
+  // The user ID of the user who saved this recipe
   @Index()
   late String userId;
 
@@ -53,6 +53,17 @@ class Recipe {
     this.notes = '',
   });
 
+  /// Clones the current recipe object - makes a copy given the current data and sets the location to the current location.
+  /// Parameters:
+  /// - id: new id for the recipe, if null it will use the current id
+  /// - name: new name for the recipe, if null it will use the current name
+  /// - imageUrl: new image URL for the recipe, if null it will use the current imageUrl
+  /// - ingredient: new list of ingredients
+  /// - instruction: new list of instructions
+  /// - notes: new notes for the recipe, if null it will use the current notes
+  /// - userId: new userId for the recipe, if null it will use the current userId
+  /// Returns:
+  /// - A new Recipe object with the updated values
   Recipe clone({
     int? id,
     String? name,
@@ -65,10 +76,10 @@ class Recipe {
     return Recipe(
       id: id ?? this.id,
       name: name ?? this.name,
-      location: location ?? this.location,
+      location: location,
       imageUrl: imageUrl ?? this.imageUrl,
-      ingredients: ingredients ?? List<String>.from(this.ingredients),
-      instructions: instructions ?? List<String>.from(this.instructions),
+      ingredients: ingredients,
+      instructions: instructions,
       notes: notes ?? this.notes,
       userId: userId ?? this.userId,
     );

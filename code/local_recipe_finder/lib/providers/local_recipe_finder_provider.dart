@@ -2,21 +2,34 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:isar/isar.dart';
-import 'package:local_recipe_finder/util/recipe_mocker.dart';
 import '../models/recipe.dart';
 import 'dart:async';
-import 'package:geocoding/geocoding.dart';
 
-/// Provider class that manages fetching/storing recipes from TheMealDB API
-/// Filters recipes by a given location/area and exposes loading data and data
+/// This is a provider class that extends ChangeNotifier to notify listeners
+/// It loads the dat from isar and stores the recipes, liked recipes, and current index of viewing recipe
+/// It uses the MealDB API to fetch recipes based on area.
+/// Fields:
+/// - isar: instance of isar db used to store and retrieve recipes
+/// - userId: id of user running this app
+/// - _recipes: fetched recipes to allow swiping over
+/// - likedRecipes: saved recipes
+/// - _currentIndex: curr index of recipe being viewed
+/// - _isLoading: if data is loading
 class LocalRecipeFinderProvider extends ChangeNotifier {
-  final Isar isar;
-  final String userId;
+  final Isar isar; // instance of Isar database
+  final String userId; // unique user ID
 
+  /// This is the constructor for the provider. It loads the data from the db
+  /// parameters:
+  /// - isar: instance of Isar db that stores user data
+  /// - userId: unique ID of user running this app, used to filter isar info
   LocalRecipeFinderProvider(this.isar, this.userId) {
     _loadInitialData();
   }
 
+  /// Loads initial data from Isar, filtered from userId. Notifies listeners when data is loaded.
+  /// Parameters: N/A
+  /// Returns: N/A
   Future<void> _loadInitialData() async {
     likedRecipes = await isar.recipes.where().userIdEqualTo(userId).findAll();
     _recipes = await isar.recipes.where().userIdEqualTo(userId).findAll();
@@ -29,8 +42,10 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
   // List to store saved recipes
   List<Recipe> likedRecipes = [];
 
+  // private index to track in _recipes the user is currently swiping on
   int _currentIndex = 0;
 
+  // getter for _currentIndex
   int get currentIndex => _currentIndex;
 
   // Getter to get recipes list
@@ -42,6 +57,10 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
   // Getter for loading state
   bool get isLoading => _isLoading;
 
+  /// Sets the next recipe by incrementing index and notifying listeners, if it
+  /// hasn't reached the end of the list
+  /// Parameters: N/A
+  /// Returns: N/A
   void nextRecipe() {
     if (_currentIndex < _recipes.length) {
       _currentIndex++;
@@ -49,6 +68,10 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
     }
   }
 
+  /// Sets the previous recipe by decrementing index and notifying listeners, if it
+  /// hasn't reached the start of the list
+  /// Parameters: N/A
+  /// Returns: N/A
   void previousRecipe() {
     if (_currentIndex > 0) {
       _currentIndex--;
@@ -56,11 +79,19 @@ class LocalRecipeFinderProvider extends ChangeNotifier {
     }
   }
 
+  /// Resets the current index to 0 and notifies listeners
+  /// Parameters: N/A
+  /// Returns: N/A
   void resetIndex() {
     _currentIndex = 0;
     notifyListeners();
   }
 
+  /// Updates a specific recipe in the likedRecipes list and notifies listeners.
+  /// if it is not found, does nothing.
+  /// Parameters:
+  /// - updatedRecipe: recipe with updated information
+  /// Returns: N/A
   void updatedRecipe(Recipe updatedRecipe) {
     final index = likedRecipes.indexWhere((r) => r.id == updatedRecipe.id);
     if (index != -1) {
