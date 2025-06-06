@@ -21,6 +21,8 @@ class _HomePageState extends State<HomePage> {
   // Index of the current recipe being shown to the user
   String? _lastArea;
 
+  String? _countryName;
+
   @override
   /// Called when the widget is inserted into the tree
   /// Sets a timer that fetches new recipes from the provider every *BLANK* seconds
@@ -38,10 +40,19 @@ class _HomePageState extends State<HomePage> {
 
           final area = await getAreaFromCoords(lat, long);
 
+          final placemarks = await placemarkFromCoordinates(lat, long);
+          final country = placemarks.isNotEmpty ? placemarks.first.country : null;
+
           if(_lastArea != area) {
             _lastArea = area;
             await recipeProvider.fetchRecipesByLocation(area);
 
+          }
+
+          if (mounted && country != null && _countryName != country) {
+            setState(() {
+              _countryName = country;
+            });
           }
         }
       });
@@ -149,25 +160,22 @@ class _HomePageState extends State<HomePage> {
               preferredSize: Size.fromHeight(24),
               child: Padding(
                 padding: EdgeInsets.only(bottom: 8.0),
-                child: Consumer<PositionProvider>(
-                  builder: (context, positionProvider, child) {
-                    String locationText;
+                //child: Consumer<PositionProvider>(
+                  //builder: (context, positionProvider, child) {
+                    //String locationText;
 
-                    if (!positionProvider.positionKnown) {
-                      locationText = "Locating...";
-                    } else if (positionProvider.latitude != null && positionProvider.longitude != null) {
-                      locationText = "Lat: ${positionProvider.latitude!.toStringAsFixed(2)}, "
-                      "Lon: ${positionProvider.longitude!.toStringAsFixed(2)}";
-                    } else {
-                      locationText = "Location is unavailable";
-                    }
-                    return Text(
-                      '📍 Current Location: $locationText',
+                    // if (!positionProvider.positionKnown) {
+                    //   locationText = "Locating...";
+                    // } else if (positionProvider.latitude != null && positionProvider.longitude != null) {
+                    //   locationText = "Lat: ${positionProvider.latitude!.toStringAsFixed(2)}, "
+                    //   "Lon: ${positionProvider.longitude!.toStringAsFixed(2)}";
+                    // } else {
+                    //   locationText = "Location is unavailable";
+                    // }
+                    child: Text(
+                      '📍 Current Location: ${_countryName ?? "Locating..."}',
                       style: const TextStyle(fontSize: 14),
-                    );
-                  }
-                )
-                
+                    ),
               ),
             ),
           ),
