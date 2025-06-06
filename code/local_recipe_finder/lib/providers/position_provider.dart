@@ -44,7 +44,7 @@ class PositionProvider extends ChangeNotifier {
   }
 
   void _startLocation() {
-    Timer.periodic(const Duration(seconds: 30), (_) async {
+    Timer(const Duration(seconds: 1), () async {
       try {
         final Position position = await _determinePosition();
         _latitude = position.latitude;

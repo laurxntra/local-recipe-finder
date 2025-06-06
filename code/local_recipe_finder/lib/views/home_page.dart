@@ -38,10 +38,12 @@ class _HomePageState extends State<HomePage> {
           final lat = positionProvider.latitude!;
           final long = positionProvider.longitude!;
 
-          final area = await getAreaFromCoords(lat, long);
+          final data = getAreaFromCoords(lat, long);
+          final area = data[0];
+          final country = data[1];
 
-          final placemarks = await placemarkFromCoordinates(lat, long);
-          final country = placemarks.isNotEmpty ? placemarks.first.country : null;
+          // final placemarks = await placemarkFromCoordinates(lat, long);
+          // final country = placemarks.isNotEmpty ? placemarks.first.country : null;
 
           if(_lastArea != area) {
             _lastArea = area;
@@ -49,7 +51,7 @@ class _HomePageState extends State<HomePage> {
 
           }
 
-          if (mounted && country != null && _countryName != country) {
+          if (mounted && _countryName != country) {
             setState(() {
               _countryName = country;
             });
