@@ -65,56 +65,85 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
     final noteProvider = Provider.of<NotesProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.recipe.name), centerTitle: true),
+      appBar: AppBar(title: Semantics (
+        header: true,
+        child: Text(widget.recipe.name),
+        ), 
+        centerTitle: true
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                widget.recipe.imageUrl,
-                height: 220,
-                width: double.infinity,
-                fit: BoxFit.cover,
+            Semantics(
+              label: 'Recipe image for ${widget.recipe.name}',
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  widget.recipe.imageUrl,
+                  height: 220,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              "Ingredients",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Semantics(
+              header: true,
+              child: const Text(
+                "Ingredients",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
             ),
             const SizedBox(height: 8),
-            ...widget.recipe.ingredients.map((item) => Text("- $item")),
+            ...widget.recipe.ingredients.map(
+              (item) => Semantics(
+                label: 'Ingredient: $item',
+                child: Text("- $item")
+              ),
+            ),
             const SizedBox(height: 16),
-            const Text(
-              "Instructions:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Semantics(
+              header: true,
+              child: const Text(
+                "Instructions:",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
             ),
             const SizedBox(height: 8),
             ...widget.recipe.instructions.asMap().entries.map(
-                  (entry) => Text("${entry.key + 1}. ${entry.value}"),
-                ),
+                  (entry) => Semantics(
+                    label: 'Step ${entry.key + 1}: ${entry.value}',
+                    child: Text("${entry.key + 1}. ${entry.value}"),
+                  ),
+            ),
             const SizedBox(height: 24),
-            const Text(
-              "Notes:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Semantics(
+              header: true,
+              child: const Text(
+                "Notes:",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
             ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.undo),
-                  onPressed: noteProvider.canUndo ? noteProvider.undo : null,
-                  tooltip: "Undo",
-                ),
-                IconButton(
-                  icon: const Icon(Icons.redo),
-                  onPressed: noteProvider.canRedo ? noteProvider.redo : null,
-                  tooltip: "Redo",
-                ),
-              ],
+            Semantics(
+              label: "Undo and Redo buttons for notes",
+              container: true,
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.undo),
+                    onPressed: noteProvider.canUndo ? noteProvider.undo : null,
+                    tooltip: "Undo",
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.redo),
+                    onPressed: noteProvider.canRedo ? noteProvider.redo : null,
+                    tooltip: "Redo",
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 8),
 
@@ -127,14 +156,17 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                   );
                 }
 
-                return TextFormField(
-                  controller: _controller,
-                  maxLines: 5,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                return Semantics(
+                  label: 'Notes text field, enter your notes about the recipe here!',
+                  child:  TextFormField(
+                    controller: _controller,
+                    maxLines: 5,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      hintText: "Write any notes about this recipe here",
                     ),
-                    hintText: "Write any notes about this recipe here",
                   ),
                 );
               },
@@ -143,9 +175,13 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
             const SizedBox(height: 16),
             Align(
               alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: _popBack,
-                child: const Text("Save Notes"),
+              child: Semantics(
+                button: true,
+                label: "Save notes",
+                child: ElevatedButton(
+                  onPressed: _popBack,
+                  child: const Text("Save Notes"),
+                ),
               ),
             ),
           ],
