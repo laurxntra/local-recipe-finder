@@ -47,3 +47,8 @@ Here is the layout of this repository.
     - `/pubspec.yaml`: this file includes all the dependencies for the app that need to be installed
 
 `docs/`: this folder includes all documentation for the project
+  - `need.md`: establishes an existing human need for this app
+  - `data.md`: explains the data design and flow of the app
+  - `evaluation.md`: reports on the usability evaluation done for the app
+  - `audit_changes.md`: reports on findings from a peer audit and changes we made
+  -  `reflection.md`: reflects on our learnings from this project
