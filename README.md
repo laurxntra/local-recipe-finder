@@ -10,7 +10,9 @@
 - Accessibility support with semantic labels and voiceover compatibility
 
 ## Screenshots
-TODO
+<img src="assets/home.PNG" alt="Local Recipe Finder Home" width="300" />
+<img src="assets/saved.PNG" alt="Local Recipe Finder Saved" width="300" />
+<img src="assets/details.PNG" alt="Local Recipe Finder Details" width="300" />
 
 ## Technologies Used
 - Flutter & Dart
