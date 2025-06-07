@@ -24,15 +24,15 @@
 lib/
 ├── main.dart
 ├── models/
-│   └── recipe.dart
+│   ├── recipe.dart
 |   └── recipe.g.dart
 ├── providers/
-│   └── local_recipe_finder_provider.dart
-|   └── notes_provider.dart
+│   ├── local_recipe_finder_provider.dart
+|   ├── notes_provider.dart
 |   └── position_provider.dart
 ├── views/
 │   ├── home_page.dart
-│   └── saved_page.dart
+│   ├── saved_page.dart
 |   └── recipe_details_page.dart
 └── utils/
     └── location_utils.dart
