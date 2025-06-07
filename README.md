@@ -47,7 +47,7 @@ All the dependencies in the app can be viewed in `pubspec.yaml`. Notably, some a
 
 1. **Clone the repo**
  ```bash
- git clone TODO
+ git clone https://github.com/laurxntra/local-recipe-finder.git
  `cd code/local_recipe_finder`
  ```
 2. **Install dependencies**
