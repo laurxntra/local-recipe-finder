@@ -53,6 +53,13 @@ All the dependencies in the app can be viewed in `pubspec.yaml`. Notably, some a
   ```bash
   `flutter pub get`
   ```
+3. **Install CocoaPods**
+   ```bash
+   cd code
+   cd local-recipe-finder
+   cd ios
+   pod install
+   ```
 4. **Run the app**
 
 To run it in release mode:
